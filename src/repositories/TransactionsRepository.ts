@@ -20,10 +20,27 @@ class TransactionsRepository {
   }
 
   public all(): Transaction[] {
-    const balance = this.getBalance();
+    return this.transactions;
   }
 
-  public getBalance(): Balance {}
+  public getBalance(): Balance {
+    const balance = this.transactions.reduce(
+      (previousValue: Balance, transaction: Transaction) => {
+        if (transaction.type === 'income') {
+          previousValue.income += transaction.value;
+        }
+        if (transaction.type === 'outcome') {
+          previousValue.outcome += transaction.value;
+        }
+        previousValue.total = previousValue.income - previousValue.outcome;
+
+        return previousValue;
+      },
+      { income: 0, outcome: 0, total: 0 },
+    );
+
+    return balance;
+  }
 
   public create({ title, value, type }: CreateTransactionDTO): Transaction {
     const transaction = new Transaction({ title, value, type });
