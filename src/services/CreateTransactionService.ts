@@ -22,7 +22,8 @@ class CreateTransactionService {
     if (type === 'outcome') {
       const balance = this.transactionsRepository.getBalance();
 
-      if (balance.total < value) {
+      const balanceWillBePositive = balance.total > value;
+      if (!balanceWillBePositive) {
         throw Error('The value of outcome is bigger than the balance');
       }
     }
